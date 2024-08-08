@@ -6,6 +6,7 @@ discord: Pavla K
 """
 
 
+import re
 # import textů, ze kterých uživatel vybírá, z listu 'TEXTS'
 from task_template import TEXTS
 
@@ -23,23 +24,23 @@ print(odd := "-" * 40)
 
 # kontola správného jména a hesla ze slovníku 'users'
 if users.get(username) != None and users[username] == password:
-    print(f"Welcome to the app, {username}\nWe have 3 texts to be analyzed.")
+    print(f"Welcome to the app, {username}\nWe have {len(TEXTS)} texts to be analyzed.")
 else:
     # v případě neregistovaného uživatele ukončení programu
     print("Unregistered user, terminating the program...")
     exit()
 print(odd)
 
-# vstup od uživatele, výběr ze tří textů pomocí čísla 1 až 3,
+# vstup od uživatele, výběr textu z listu 'TEXTS' pomocí čísla 1 až délky listu 'TEXTS',
 # uloženého do proměnné 'num'
-num = input("Enter a number btw. 1 and 3 to select: ")
+num = input(f"Enter a number btw. 1 and {len(TEXTS)} to select: ")
 print(odd)
 
 # v případě chybného vstupu od uživatele, ukončení programu
 if not num.isdigit():
     print("Input is not a number, terminating the program...")
     exit()
-elif int(num) < 1 or int(num) > 3:
+elif int(num) < 1 or int(num) > len(TEXTS):
     print("Number is not correct, terminating the program...")
     exit()
 
@@ -50,18 +51,8 @@ text = str(TEXTS[num-1])
 words = text.split()
 # print(words)
 
-# 'words_only' = odstranění z listu 'words' . a ,
-words_only = []
-for word in words:
-    if "." in word: 
-        without_dot = word.replace(".","")
-        words_only.append(without_dot)
-    elif "," in word:
-        without_comma = word.replace(",","")
-        words_only.append(without_comma)
-    else:    
-        words_only.append(word)
-# print(words_only)
+# 'words_only' = odstranění interpunkce z listu 'words'
+words_only = [re.sub("[^A-Za-z0-9]", "", word) for word in words]
 
 # 'word_count' - počet slov v listu 'words_only'
 word_count = len(words_only)
@@ -76,7 +67,7 @@ frequency = []      # četnost délek slov v listu 'word_only'
 
 for word in words_only:
     if word.isalpha():
-        title_count += int(word.istitle())
+        title_count += int(word[0].isupper())
         upper_count += int(word.isupper())
         lower_count += int(word.islower())
     number_count += int(word.isnumeric())
